@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView[][] tiles = new TextView[GRID_SIZE][GRID_SIZE];
     private int score = 0;
     private boolean soundEnabled = true;
-    private boolean swipeHandled = false; // Added flag for swipe handling
+    private boolean swipeHandled = false;
     private SharedPreferences highScorePrefs;
     private int highScore = 0;
     private TextView highScoreText;
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindow().getDecorView().setBackgroundColor(Color.parseColor("#fdfaf6")); // Softer warm white background
+        getWindow().getDecorView().setBackgroundColor(Color.parseColor("#fdfaf6"));
 
         highScorePrefs = getSharedPreferences("GamePrefs", MODE_PRIVATE);
         highScore = highScorePrefs.getInt("high_score", 0);
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         GridLayout gridLayout = findViewById(R.id.gridLayout);
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         int screenWidth = metrics.widthPixels;
-        int tileSize = screenWidth / GRID_SIZE - 30; // auto-scale with padding
+        int tileSize = screenWidth / GRID_SIZE - 30;
 
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
@@ -66,10 +66,9 @@ public class MainActivity extends AppCompatActivity {
                 tile.setText("");
                 tile.setTextSize(30);
                 tile.setTextColor(Color.parseColor("#776e65"));
-                tile.setBackgroundColor(Color.parseColor("#d6d6d6")); // neutral uniform tile background
+                tile.setBackgroundColor(Color.parseColor("#d6d6d6"));
                 tile.setGravity(android.view.Gravity.CENTER);
                 tile.setPadding(10, 10, 10, 10);
-                // Removed elevation line: tile.setElevation(12f);
                 tile.setTypeface(null, android.graphics.Typeface.BOLD);
 
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -80,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 tiles[row][col] = tile;
             }
         }
-
-        // Spawn two initial tiles
         spawnRandomTile(gridLayout, tiles, false);
         spawnRandomTile(gridLayout, tiles, false);
 
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            swipeHandled = false; // Reset swipe flag after gesture
+            swipeHandled = false;
         }
         return gestureDetector.onTouchEvent(event);
     }
@@ -106,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             case 128: return Color.parseColor("#edcf72");
             case 256: return Color.parseColor("#edcc61");
             case 512: return Color.parseColor("#edc850");
-            default: return Color.parseColor("#d6d6d6"); // unified tile color
+            default: return Color.parseColor("#d6d6d6");
         }
     }
 
@@ -137,14 +134,11 @@ public class MainActivity extends AppCompatActivity {
                         .setDuration(250)
                         .setInterpolator(new android.view.animation.BounceInterpolator())
                         .withEndAction(() -> {
-                            // Removed sound playback
                         })
                         .start();
             }
         }
     }
-
-    // Move moveTiles above GestureListener so it's accessible within the inner class
     private void moveTiles(String direction) {
         GridLayout gridLayout = findViewById(R.id.gridLayout);
         boolean moved = false;
@@ -165,8 +159,6 @@ public class MainActivity extends AppCompatActivity {
                     line.add(Integer.parseInt(text));
                 }
             }
-
-            // Merge tiles
             for (int k = 0; k < line.size() - 1; k++) {
                 if (line.get(k).equals(line.get(k + 1))) {
                     score += line.get(k);
@@ -213,8 +205,6 @@ public class MainActivity extends AppCompatActivity {
                     final int finalCol = col;
                     final String finalText = newText;
                     final int finalVal = newVal;
-
-                    // Update tile directly
                     tiles[finalRow][finalCol].setText(finalText);
                     tiles[finalRow][finalCol].setBackgroundColor(getTileColor(finalVal));
                     tiles[finalRow][finalCol].setScaleX(0.8f);
@@ -232,10 +222,10 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = getSharedPreferences("GamePrefs", MODE_PRIVATE).edit();
             editor.putInt("score", score);
             editor.apply();
-            gridLayout.postDelayed(() -> { // Added delay for smoother visuals
+            gridLayout.postDelayed(() -> {
                 spawnRandomTile(gridLayout, tiles, true);
                 checkGameOver();
-            }, 300); // delay after movement finishes
+            }, 300);
         }
     }
 
@@ -243,14 +233,14 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 String current = tiles[i][j].getText().toString();
-                if (current.isEmpty()) return; // Empty tile found, not game over
+                if (current.isEmpty()) return;
 
                 int currentVal = Integer.parseInt(current);
                 if ((i > 0 && tiles[i - 1][j].getText().toString().equals(current)) ||
                         (i < GRID_SIZE - 1 && tiles[i + 1][j].getText().toString().equals(current)) ||
                         (j > 0 && tiles[i][j - 1].getText().toString().equals(current)) ||
                         (j < GRID_SIZE - 1 && tiles[i][j + 1].getText().toString().equals(current))) {
-                    return; // Mergeable neighbor found
+                    return;
                 }
             }
         }
@@ -308,8 +298,6 @@ public class MainActivity extends AppCompatActivity {
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_THRESHOLD = 250;
-        // private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
@@ -317,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (swipeHandled) return false; // Prevent multiple moves for a single swipe
+            if (swipeHandled) return false;
 
             float diffX = e2.getX() - e1.getX();
             float diffY = e2.getY() - e1.getY();

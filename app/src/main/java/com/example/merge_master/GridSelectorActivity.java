@@ -14,12 +14,7 @@ public class GridSelectorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grid_selector);
 
         Button btn4 = findViewById(R.id.btn_grid_4);
-        Button btn5 = findViewById(R.id.btn_grid_5);
-        Button btn6 = findViewById(R.id.btn_grid_6);
-
         btn4.setOnClickListener(v -> startGameWithGridSize(4));
-        btn5.setOnClickListener(v -> startGameWithGridSize(5));
-        btn6.setOnClickListener(v -> startGameWithGridSize(6));
     }
 
     private void startGameWithGridSize(int gridSize) {
